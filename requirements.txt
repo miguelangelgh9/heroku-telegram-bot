@@ -10,4 +10,4 @@ git+https://github.com/Kylmakalle/pyTelegramBotAPI.git@feature-BotAPIV3
 git+https://github.com/kurtmckee/feedparser.git@develop
 
 # Or you have .zip library
-https://site.org/files/package.zip
+#https://site.org/files/package.zip
