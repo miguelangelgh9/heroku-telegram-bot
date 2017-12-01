@@ -63,7 +63,7 @@ def feed(bot, update):
 
 def help(bot, update):
     """Send a message when the command /help is issued."""
-    update.message.reply_text('Help!')
+    update.message.reply_text('Hey There! For the moment I can only show you the latest One Piece issue on Manga stream, just use /feed to see it.')
 
 
 def echo(bot, update):
