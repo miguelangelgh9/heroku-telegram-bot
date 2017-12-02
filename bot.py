@@ -62,7 +62,7 @@ def feed(bot, update):
     for i in feed['items']:
         if 'One Piece' in i['title']:
             piece=i
-            issue+=1
+            global issue+=1
             break
     link=piece['links'][0]
     update.message.reply_text('The latest One Piece issue is '+ piece['title']+ '. It was released on ' +piece['published']+'\nYou can read it on MangaStream: '+ link['href'])
