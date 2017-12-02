@@ -8,6 +8,7 @@ import telebot
 # Example of your code beginning
 #           Config vars
 token = os.environ['TELEGRAM_TOKEN']
+issue=188
 #some_api_token = os.environ['SOME_API_TOKEN']
 #             ...
 
@@ -45,7 +46,11 @@ logger = logging.getLogger(__name__)
 # update. Error handlers also receive the raised TelegramError object in error.
 def start(bot, update):
     """Send a message when the command /start is issued."""
-    update.message.reply_text('Hi! I can show you the latest One Piece issue on the MangaStream RSS feed')
+    update.message.reply_text('Hi! I can show you the latest One Piece issue on the MangaStream RSS feed, just use the /feed command.')
+    
+def currentIssue(bot, update):
+    """Send a message when the command /issue is issued."""
+    update.message.reply_text(str(issue))
     
 """def caps(bot, update, args):
     name = ' '.join(args).title()
@@ -57,6 +62,7 @@ def feed(bot, update):
     for i in feed['items']:
         if 'One Piece' in i['title']:
             piece=i
+            issue++
             break
     link=piece['links'][0]
     update.message.reply_text('The latest One Piece issue is '+ piece['title']+ '. It was released on ' +piece['published']+'\nYou can read it on MangaStream: '+ link['href'])
@@ -78,6 +84,7 @@ def error(bot, update, error):
 
 def main():
     """Start the bot."""
+    
     # Create the EventHandler and pass it your bot's token.
     updater = Updater(token)
 
@@ -88,6 +95,7 @@ def main():
     dp.add_handler(CommandHandler("start", start))
     dp.add_handler(CommandHandler("help", help))
     dp.add_handler(CommandHandler("feed", feed))
+    dp.add_handler(CommandHandler("issue", currentIssue))
     #dp.add_handler(CommandHandler('mangaStream', mangaStream, pass_args=True))
 
     # on noncommand i.e message - echo the message on Telegram
