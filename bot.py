@@ -158,7 +158,6 @@ def main():
     dp.add_handler(CommandHandler("start", start))
     dp.add_handler(CommandHandler("help", help))
     dp.add_handler(CommandHandler("onepiece", onepiece))
-    dp.add_handler(CommandHandler("issue", currentIssue))
     dp.add_handler(CommandHandler("addchat", addchat))
     dp.add_handler(CommandHandler("rmchat", rmchat))
     dp.add_handler(CommandHandler('feed', feed, pass_args=True))
