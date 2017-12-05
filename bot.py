@@ -2,15 +2,23 @@
 import redis
 import os
 import telebot
-# import some_api_lib
-# import ...
+import psycopg2
+import urlparse
 
 # Example of your code beginning
 #           Config vars
 token = os.environ['TELEGRAM_TOKEN']
-issue=887
-chats=[]
-#some_api_token = os.environ['SOME_API_TOKEN']
+urlparse.uses_netloc.append("postgres")
+dburl = urlparse.urlparse(os.environ["DATABASE_URL"])
+con = psycopg2.connect(database=dburl.path[1:],
+  user=dburl.username,
+  password=dburl.password,
+  host=dburl.hostname,
+  port=dburl.port
+)
+cur = con.cursor()
+
+
 #             ...
 
 # If you use redis, install this add-on https://elements.heroku.com/addons/heroku-redis
@@ -52,26 +60,26 @@ def start(bot, update):
 def addchat(bot, update):
     """Add the current chat to the list of chats to update"""
     chatid=update.message.chat_id
-    global chats
-    if chatid in chats:
+    global cur
+    cur.execute("SELECT id=" + str(chatid) + "FROM chats")
+    row=cur.fetchone()
+    if row:
         update.message.reply_text("It seems like you are already on the list!")
     else:
-        chats.append(chatid)
-        update.message.reply_text("Your chat has been added and will be notified once a new update comes!")
+        cur.execute("INSERT INTO chats VALUES("+ str(chatid) +")")
+        update.message.reply_text("Your chat has been added and will be notified once a update comes!")
 
 def rmchat(bot, update):
     """Remove the current chat from the list of chats to update"""
     chatid=update.message.chat_id
-    global chats
-    if chatid in chats:
-        chats.remove(chatid)
+    global cur
+    cur.execute("SELECT id=" + str(chatid) + "FROM chats")
+    row=cur.fetchone()
+    if row:
+        cur.execute("DELETE FROM chats WHERE id="+ str(chatid))
         update.message.reply_text("You have been removed succesfully and won't be notified in the future!")
     else:
         update.message.reply_text("Your chat is not in my list... Would you like to /addchat ?")
-
-def currentIssue(bot, update):
-    """Send a message when the command /issue is issued."""
-    update.message.reply_text("The current One Piece issue is " + str(issue))
 
 def feed(bot, update, args):
     url='https://www.mangastream.com/rss'
@@ -102,14 +110,17 @@ def onepiece(bot, update):
 def alarm(bot, job):
     url='https://www.mangastream.com/rss'
     feed = feedparser.parse(url)
-    global issue
+    global cur
+    cur.execute("SELECT * FROM issue")
+    issue=cur.fetchone()[0]
     for piece in feed['items']:
         if 'One Piece' in piece['title'] and str(issue + 1) in piece['title']:
-            issue += 1
+            cur.execute("UPDATE issue SET id="+ str(issue+1) +" WHERE id="+ str(issue))
             link=piece['links'][0]
-            global chats
-            for c in chats:
-                bot.send_message(chat_id=c, text='The latest One Piece issue is '+ piece['title']+ '. It was released on ' +piece['published']+'\nYou can read it on MangaStream: '+ link['href'])
+            cur.execute("SELECT * FROM chats")
+            row=cur.fetchall()
+            for c in row:
+                bot.send_message(chat_id=c[0], text='The latest One Piece issue is '+ piece['title']+ '. It was released on ' +piece['published']+'\nYou can read it on MangaStream: '+ link['href'])
             break
 
 
