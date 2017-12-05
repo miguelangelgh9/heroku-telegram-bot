@@ -61,9 +61,9 @@ def addchat(bot, update):
     """Add the current chat to the list of chats to update"""
     chatid=update.message.chat_id
     global cur
-    cur.execute("SELECT id=" + str(chatid) + " FROM chats")
-    row=cur.fetchone()
-    if row:
+    cur.execute("SELECT * FROM chats")
+    row=cur.fetchall()
+    if (chatid,) in row:
         update.message.reply_text("It seems like you are already on the list!")
     else:
         cur.execute("INSERT INTO chats VALUES("+ str(chatid) +")")
@@ -75,9 +75,9 @@ def rmchat(bot, update):
     """Remove the current chat from the list of chats to update"""
     chatid=update.message.chat_id
     global cur
-    cur.execute("SELECT id=" + str(chatid) + " FROM chats")
-    row=cur.fetchone()
-    if row:
+    cur.execute("SELECT * FROM chats")
+    row=cur.fetchall()
+    if (chatid,) in row:
         cur.execute("DELETE FROM chats WHERE id="+ str(chatid))
         global con
         con.commit()
