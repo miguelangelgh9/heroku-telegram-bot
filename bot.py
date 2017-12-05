@@ -69,7 +69,7 @@ def addchat(bot, update):
         cur.execute("INSERT INTO chats VALUES("+ str(chatid) +")")
         global con
         con.commit()
-        update.message.reply_text("Your chat has been added and will be notified once a update comes!")
+        update.message.reply_text("Your chat has been added and will be notified once an update comes!")
 
 def rmchat(bot, update):
     """Remove the current chat from the list of chats to update"""
@@ -132,7 +132,7 @@ def alarm(bot, job):
 
 def help(bot, update):
     """Send a message when the command /help is issued."""
-    update.message.reply_text('Hey There!\n These are all my commands:\n/start\n/addchat\n/rmchat\n/onepiece\n/issue\n/feed')
+    update.message.reply_text('Hey There!\n These are all my commands:\n/start\n/addchat\n/rmchat\n/onepiece\n/feed')
 
 
 def echo(bot, update):
