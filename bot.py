@@ -67,6 +67,8 @@ def addchat(bot, update):
         update.message.reply_text("It seems like you are already on the list!")
     else:
         cur.execute("INSERT INTO chats VALUES("+ str(chatid) +")")
+        global con
+        con.commit()
         update.message.reply_text("Your chat has been added and will be notified once a update comes!")
 
 def rmchat(bot, update):
@@ -77,6 +79,8 @@ def rmchat(bot, update):
     row=cur.fetchone()
     if row:
         cur.execute("DELETE FROM chats WHERE id="+ str(chatid))
+        global con
+        con.commit()
         update.message.reply_text("You have been removed succesfully and won't be notified in the future!")
     else:
         update.message.reply_text("Your chat is not in my list... Would you like to /addchat ?")
@@ -116,6 +120,8 @@ def alarm(bot, job):
     for piece in feed['items']:
         if 'One Piece' in piece['title'] and str(issue + 1) in piece['title']:
             cur.execute("UPDATE issue SET id="+ str(issue+1) +" WHERE id="+ str(issue))
+            global con
+            con.commit()
             link=piece['links'][0]
             cur.execute("SELECT * FROM chats")
             row=cur.fetchall()
