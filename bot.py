@@ -112,19 +112,31 @@ def onepiece(bot, update):
     update.message.reply_text('The latest One Piece issue is '+ piece['title']+ '. It was released on ' +piece['published']+'\nYou can read it on MangaStream: '+ link['href'])
 
 def alarm(bot, job):
+    global con
+    global cur
     url='https://www.mangastream.com/rss'
     feed = feedparser.parse(url)
-    global cur
-    cur.execute("SELECT * FROM issue")
-    issue=cur.fetchone()[0]
+    try:
+      cur.execute("SELECT * FROM issue")
+      issue=cur.fetchone()[0]
+    except psycopg2.DatabaseError:
+      issue=0
+      if con:
+        con.rollback()
+    
     for piece in feed['items']:
         if 'One Piece' in piece['title'] and str(issue + 1) in piece['title']:
-            cur.execute("UPDATE issue SET id="+ str(issue+1) +" WHERE id="+ str(issue))
-            global con
-            con.commit()
+            try:
+              cur.execute("UPDATE issue SET id="+ str(issue+1) +" WHERE id="+ str(issue))
+              con.commit()
+              cur.execute("SELECT * FROM chats")
+              row=cur.fetchall()
+            except psycopg2.DatabaseError:
+              row=""
+              if con:
+                con.rollback()
+            
             link=piece['links'][0]
-            cur.execute("SELECT * FROM chats")
-            row=cur.fetchall()
             for c in row:
                 bot.send_message(chat_id=c[0], text='The latest One Piece issue is '+ piece['title']+ '. It was released on ' +piece['published']+'\nYou can read it on MangaStream: '+ link['href'])
             break
