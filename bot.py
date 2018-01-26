@@ -104,6 +104,7 @@ def feed(bot, update, args):
 def onepiece(bot, update):
     url='https://www.mangastream.com/rss'
     feed = feedparser.parse(url)
+    piece = 0
     for i in feed['items']:
         if 'One Piece' in i['title']:
             piece=i
