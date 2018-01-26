@@ -104,13 +104,16 @@ def feed(bot, update, args):
 def onepiece(bot, update):
     url='https://www.mangastream.com/rss'
     feed = feedparser.parse(url)
-    piece = 0
     for i in feed['items']:
         if 'One Piece' in i['title']:
             piece=i
             break
-    link=piece['links'][0]
-    update.message.reply_text('The latest One Piece issue is '+ piece['title']+ '. It was released on ' +piece['published']+'\nYou can read it on MangaStream: '+ link['href'])
+    if piece:
+        link=piece['links'][0]
+        update.message.reply_text('The latest One Piece issue is '+ piece['title']+ '. It was released on ' +piece['published']+'\nYou can read it on MangaStream: '+ link['href'])
+    
+    else:
+        update.message.reply_text("I couldn't find a One Piece issue! This message might be showing because the latest One Piece feed is too old.")
 
 def alarm(bot, job):
     global con
