@@ -122,16 +122,17 @@ def alarm(bot, job):
     feed = feedparser.parse(url)
     try:
       cur.execute("SELECT * FROM issue")
-      issue=cur.fetchone()[0]
+      issue1=cur.fetchone()[1]
+      issue2=cur.fetchone()[1]
     except psycopg2.DatabaseError:
       issue=0
       if con:
         con.rollback()
     
     for piece in feed['items']:
-        if 'One Piece' in piece['title'] and str(issue + 1) in piece['title']:
+        if 'One Piece' in piece['title'] and str(issue1 + 1) in piece['title']:
             try:
-              cur.execute("UPDATE issue SET id="+ str(issue+1) +" WHERE id="+ str(issue))
+              cur.execute("UPDATE issue SET issue="+ str(issue1+1) +" WHERE id= 1")
               con.commit()
               cur.execute("SELECT * FROM chats")
               row=cur.fetchall()
@@ -143,6 +144,23 @@ def alarm(bot, job):
             link=piece['links'][0]
             for c in row:
                 bot.send_message(chat_id=c[0], text='The latest One Piece issue is '+ piece['title']+ '. It was released on ' +piece['published']+'\nYou can read it on MangaStream: '+ link['href'])
+            break
+            
+    for piece in feed['items']:
+        if 'One Piece' in piece['title'] and str(issue2 + 1) in piece['title']:
+            try:
+              cur.execute("UPDATE issue SET issue="+ str(issue2+1) +" WHERE id= 2")
+              con.commit()
+              cur.execute("SELECT * FROM chats")
+              row=cur.fetchall()
+            except psycopg2.DatabaseError:
+              row=""
+              if con:
+                con.rollback()
+            
+            link=piece['links'][0]
+            for c in row:
+                bot.send_message(chat_id=c[0], text='The latest One Piece issue is '+ piece['title']+ '. It was released on ' +piece['published']+'\nYou can read it on Jaiminisbox: '+ link['href'])
             break
 
 
