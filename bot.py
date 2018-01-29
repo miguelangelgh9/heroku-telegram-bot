@@ -146,6 +146,9 @@ def alarm(bot, job):
                 bot.send_message(chat_id=c[0], text='The latest One Piece issue is '+ piece['title']+ '. It was released on ' +piece['published']+'\nYou can read it on MangaStream: '+ link['href'])
             break
             
+    url='https://jaiminisbox.com/reader/feeds/rss'
+    feed = feedparser.parse(url)
+            
     for piece in feed['items']:
         if 'One Piece' in piece['title'] and str(issue2 + 1) in piece['title']:
             try:
